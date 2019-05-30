@@ -11,7 +11,7 @@ if ($_GET["accion"]){
 	$fichero = 'omni.html';
 	
 	if ($_GET["accion"] == "Encender"){
-		echo "ENCENCIENDO";
+		echo "ENCENDIENDO";
 		$contenido = "[OMNI] ENCENDER\n";
 	}
 	else{
