@@ -21,9 +21,9 @@ void loop() {
   delay(100);
   Serial1.write("AT+HTTPACTION=0\r\n");
   delay(100);
-  parseo();
   Serial1.write("AT+HTTPREAD\r\n");
   delay(100);
+  parseo();
   Serial1.write("AT+HTTPTERM\r\n");
   delay(100);
 }
@@ -66,7 +66,7 @@ void parseo() {
           if (lastLine.indexOf("[OMNI] ENCENDER") >= 0) {
             ledStatus = 1;
           } 
-          else {
+          else (lastLine.indexOf("[OMNI] APAGAR") >= 0) { 
             ledStatus = 0;
           }
 
