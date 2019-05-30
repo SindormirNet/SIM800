@@ -11,43 +11,70 @@ void setup() {
   configura_bearer();
 }
 
+void vacia_buffer(){
+  while(Serial1.available()) {
+    Serial.print((char)Serial1.read());
+  }
+  Serial.println();
+}
+
 void loop() {
   digitalWrite(LED_BUILTIN, ledStatus);     //Enciende o apaga el LED
   Serial1.write("AT+HTTPINIT\r\n");
-  delay(100);
+  delay(300);
+  Serial.println("INIT");
+  vacia_buffer();
+
   Serial1.write("AT+HTTPPARA=\"CID\",1\r\n");
-  delay(100);
+  delay(300);
+  Serial.println("PARA");
+  vacia_buffer();
+
   Serial1.write("AT+HTTPPARA=\"URL\",\"iot.sindormir.net/omni/omni.html\"\r\n");
-  delay(100);
+  delay(300);
+  Serial.println("URL");
+  vacia_buffer();
+  
   Serial1.write("AT+HTTPACTION=0\r\n");
-  delay(100);
+  delay(300);
+  Serial.println("ACTION");
+  vacia_buffer();
+  delay(1000);
+  
   Serial1.write("AT+HTTPREAD\r\n");
-  delay(100);
+  delay(300);
+  Serial.println("READ");
   parseo();
+  
   Serial1.write("AT+HTTPTERM\r\n");
-  delay(100);
+  delay(600);
+  Serial.println("TERM");
+  vacia_buffer();
+  delay(5000);
+
 }
 
 void configura_bearer() {
-  Serial1.write("AT+CREG?\r\n");    
-  delay(500);                   
-  Serial1.write("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");    
-  delay(500);       
-  Serial1.write("AT+SAPBR=3,1,\"APN\",\"orangeworld\"\r\n");    
-  delay(500);       
-  Serial1.write("AT+SAPBR=1,1\r\n");    
-  delay(500);       
-  Serial1.write("AT+SAPBR=2,1\r\n");    
-  delay(500);       
-  Serial1.write("AT+CGATT=1\r\n");    
-  delay(500);       
-  Serial.println("Configuracion terminada");    
-  delay(500); 
+  Serial1.write("AT+CREG?\r\n");
+  delay(500);
+  Serial1.write("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"\r\n");
+  delay(500);
+  Serial1.write("AT+SAPBR=3,1,\"APN\",\"movistar.es\"\r\n");
+  delay(500);
+  Serial1.write("AT+SAPBR=1,1\r\n");
+  delay(500);
+  Serial1.write("AT+SAPBR=2,1\r\n");
+  delay(500);
+  Serial1.write("AT+CGATT=1\r\n");
+  delay(500);
+  Serial.println("Configuracion terminada");
+  delay(500);
 }
 
 void parseo() {
   while (Serial1.available()) {
     char lastCharRead = Serial1.read();
+    Serial.print(lastCharRead); //DEBUG
     //Lee cada caracter recibido hasta encontrar un intro y retorno de carro
     if (lastCharRead == '\r' || lastCharRead == '\n') {
       String lastLine = String(currentLine);
@@ -56,7 +83,7 @@ void parseo() {
         Serial.println(lastLine);
         nextLineIsMessage = true;
 
-      } 
+      }
       else if (lastLine.length() > 0) {
 
         if (nextLineIsMessage) {
@@ -65,8 +92,8 @@ void parseo() {
           //Detecta si la llamada proviene del numero correcto
           if (lastLine.indexOf("[OMNI] ENCENDER") >= 0) {
             ledStatus = 1;
-          } 
-          else if (lastLine.indexOf("[OMNI] APAGAR") >= 0) { 
+          }
+          else if (lastLine.indexOf("[OMNI] APAGAR") >= 0) {
             ledStatus = 0;
           }
 
@@ -79,10 +106,11 @@ void parseo() {
         currentLine[i] = (char)0;
       }
       currentLineIndex = 0;
-    } 
+    }
     else {
       currentLine[currentLineIndex++] = lastCharRead;
     }
   }
 }
+
 
