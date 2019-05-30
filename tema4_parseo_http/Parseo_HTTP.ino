@@ -66,7 +66,7 @@ void parseo() {
           if (lastLine.indexOf("[OMNI] ENCENDER") >= 0) {
             ledStatus = 1;
           } 
-          else (lastLine.indexOf("[OMNI] APAGAR") >= 0) { 
+          else if (lastLine.indexOf("[OMNI] APAGAR") >= 0) { 
             ledStatus = 0;
           }
 
